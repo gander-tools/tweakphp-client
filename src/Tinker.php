@@ -2,6 +2,7 @@
 
 namespace TweakPHP\Client;
 
+use Psy\Configuration;
 use Psy\ExecutionLoopClosure;
 use Psy\Shell;
 use Symfony\Component\Console\Output\BufferedOutput;
@@ -15,11 +16,12 @@ class Tinker
 
     protected OutputModifier $outputModifier;
 
-    public function __construct(OutputModifier $outputModifier, $config)
+    public function __construct(OutputModifier $outputModifier, ?Configuration $config = null, array $scopeVariables = [])
     {
         $this->output = new BufferedOutput();
 
         $this->shell = $this->createShell($this->output, $config);
+        $this->shell->setScopeVariables($scopeVariables);
 
         $this->outputModifier = $outputModifier;
     }
@@ -27,7 +29,7 @@ class Tinker
     public function execute(string $phpCode): string
     {
         $phpCode = $this->removeComments($phpCode);
-        
+
         $this->shell->addInput($phpCode);
 
         $closure = new ExecutionLoopClosure($this->shell);
