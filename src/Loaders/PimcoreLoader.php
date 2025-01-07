@@ -32,4 +32,21 @@ class PimcoreLoader extends BaseLoader
         return \Composer\InstalledVersions::getPrettyVersion('pimcore/pimcore');
     }
 
+    public function variables(): array
+    {
+        $scope = [
+            'kernel' => \Pimcore::getKernel(),
+        ];
+
+        if (isset($scope['kernel'])) {
+            $scope['container'] = $scope['kernel']->getContainer();
+            if (isset($scope['container']) && $scope['container']->has('test.service_container')) {
+                $scope['container'] = $scope['container']->get('test.service_container');
+            }
+        }
+
+        return $scope;
+    }
+
+
 }
