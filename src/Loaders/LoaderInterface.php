@@ -2,6 +2,8 @@
 
 namespace TweakPHP\Client\Loaders;
 
+use Psy\Configuration;
+
 interface LoaderInterface
 {
     /**
@@ -30,4 +32,15 @@ interface LoaderInterface
      * @return void
      */
     public function execute(string $code);
+
+    /**
+     * @param Configuration $config
+     * @return void
+     */
+    public function configure(Configuration $config): void;
+
+    /**
+     * @return array
+     */
+    public function variables(): array;
 }

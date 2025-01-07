@@ -2,6 +2,7 @@
 
 namespace TweakPHP\Client\Loaders;
 
+use Psy\Configuration;
 use Throwable;
 
 class LaravelLoader extends ComposerLoader
@@ -55,5 +56,28 @@ class LaravelLoader extends ComposerLoader
     public function version(): string
     {
         return $this->app->version();
+    }
+
+    /**
+     * @param Configuration $config
+     * @return void
+     */
+    public function configure(Configuration $config): void
+    {
+        if (class_exists('Illuminate\Support\Collection') && class_exists('Laravel\Tinker\TinkerCaster')) {
+            $config->getPresenter()->addCasters([
+                \Illuminate\Support\Collection::class => 'Laravel\Tinker\TinkerCaster::castCollection',
+            ]);
+        }
+        if (class_exists('Illuminate\Database\Eloquent\Model') && class_exists('Laravel\Tinker\TinkerCaster')) {
+            $config->getPresenter()->addCasters([
+                \Illuminate\Database\Eloquent\Model::class => 'Laravel\Tinker\TinkerCaster::castModel',
+            ]);
+        }
+        if (class_exists('Illuminate\Foundation\Application') && class_exists('Laravel\Tinker\TinkerCaster')) {
+            $config->getPresenter()->addCasters([
+                \Illuminate\Foundation\Application::class => 'Laravel\Tinker\TinkerCaster::castApplication',
+            ]);
+        }
     }
 }
