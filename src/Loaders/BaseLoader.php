@@ -17,24 +17,10 @@ abstract class BaseLoader implements LoaderInterface
             'configFile' => null,
         ]);
         $config->setUpdateCheck(Checker::NEVER);
-        if (class_exists('Illuminate\Support\Collection') && class_exists('Laravel\Tinker\TinkerCaster')) {
-            $config->getPresenter()->addCasters([
-                \Illuminate\Support\Collection::class => 'Laravel\Tinker\TinkerCaster::castCollection',
-            ]);
-        }
-        if (class_exists('Illuminate\Database\Eloquent\Model') && class_exists('Laravel\Tinker\TinkerCaster')) {
-            $config->getPresenter()->addCasters([
-                \Illuminate\Database\Eloquent\Model::class => 'Laravel\Tinker\TinkerCaster::castModel',
-            ]);
-        }
-        if (class_exists('Illuminate\Foundation\Application') && class_exists('Laravel\Tinker\TinkerCaster')) {
-            $config->getPresenter()->addCasters([
-                \Illuminate\Foundation\Application::class => 'Laravel\Tinker\TinkerCaster::castApplication',
-            ]);
-        }
+        $this->configure($config);
         $config->setRawOutput(true);
 
-        $this->tinker = new Tinker(new CustomOutputModifier(), $config);
+        $this->tinker = new Tinker(new CustomOutputModifier(), $config, $this->variables());
     }
 
     public function execute(string $code)
@@ -42,5 +28,21 @@ abstract class BaseLoader implements LoaderInterface
         $output = $this->tinker->execute($code);
 
         echo trim($output);
+    }
+
+    /**
+     * @param Configuration $config
+     * @return void
+     */
+    public function configure(Configuration $config): void
+    {
+    }
+
+    /**
+     * @return array
+     */
+    public function variables(): array
+    {
+        return [];
     }
 }
